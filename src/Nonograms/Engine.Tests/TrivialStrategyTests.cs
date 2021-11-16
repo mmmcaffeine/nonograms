@@ -9,23 +9,27 @@
         // * hint is greater than count of cells
         // * any cell is already set to false (we don't care if any are set to false)
         // * return cells as is if the hint does not match
-        // * more complex hints (e.g. {2, 2} or {3, 1}) should still return true (assuming cells has count of 5)
 
-        [Fact]
-        public void Execute_Should_FillAllCellsWhenHintIsAppropriate()
+        public static TheoryData<int[], bool?[], bool?[]> ExecuteTheoryData => new()
+        {
+            { new[] { 5 }, new bool?[] { null, null, null, null, null }, new bool?[] { true, true, true, true, true } },
+            { new[] { 2, 2 }, new bool?[] { null, null, null, null, null }, new bool?[] { true, true, false, true, true } },
+            { new[] { 1, 1, 1 }, new bool?[] { null, null, null, null, null }, new bool?[] { true, false, true, false, true } },
+            { new[] { 3, 3 }, new bool?[] { null, null, null, null, null, null, null }, new bool?[] { true, true, true, false, true, true, true } }
+        };
+
+        [Theory]
+        [MemberData(nameof(ExecuteTheoryData))]
+        public void Execute_Should_FillOrEliminateAllCellsWhenHintIsMatch(IEnumerable<int> hint, IEnumerable<bool?> cells, IEnumerable<bool?> expected)
         {
             // Arrange
             var sut = new TrivialStrategy();
-            var hint = new[] {5};
-            var cells = new bool?[5];
-
-            Array.Fill(cells, null);
 
             // Act
             var actual = sut.Execute(hint, cells);
 
             // Assert
-            actual.Should().Equal(true, true, true, true, true);
+            actual.Should().Equal(expected);
         }
     }
 }
