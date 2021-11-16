@@ -6,14 +6,23 @@ public class TrivialStrategy : IStrategy
     {
         var hintArray = hint.ToArray();
 
-        for(var i = 0; i < hintArray.Length; i++)
+        return CanSolve(hintArray, cells)
+            ? Solve(hintArray)
+            : cells;
+    }
+
+    private static bool CanSolve(int[] hint, IEnumerable<bool?> cells) => hint.Sum() + hint.Length - 1 == cells.Count();
+
+    private static IEnumerable<bool?> Solve(int[] hint)
+    {
+        for (var i = 0; i < hint.Length; i++)
         {
-            for(var j = 0; j < hintArray[i]; j++)
+            for (var j = 0; j < hint[i]; j++)
             {
                 yield return true;
             }
 
-            if (i < hintArray.Length - 1)
+            if (i < hint.Length - 1)
             {
                 yield return false;
             }
