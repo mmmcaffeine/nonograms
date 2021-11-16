@@ -32,3 +32,4 @@
 * Do I want to change the design of the interface so I don't have to keep turning `IEnumerable<T>` into `t[]`?
     * `ICollection<T>` has a `Count` property which is really what I'm after most of the time
     * Could I have an efficient method in any `StrategyBase` type that would look at the underlying type of the `IEnumerable<T>` and cast to `ICollection<T>` or `Array<T>` if possible, and convert if not?
+* Using `bool?` to represent cells is creating some friction. I cannot just create an array of nulls as the compiler fails to infer a type. I have to manually specify the type of the parameter which is a nuisance
