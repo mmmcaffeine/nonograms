@@ -6,11 +6,19 @@
 
 ## `GlueStrategy`
 
+* Would it be better to implement "right glue" by reversing the array, performing "left glue" then reversing again?
+    * This would almost certainly be slower, but you wouldn't then have what is essentially a repeated algorithm
+    * This idea would probably apply to other strategies too such as when you have e.g. "1,2" in a 5x5 grid and can say the cell at 4 is filled
 * This could be expanded to cope with multi-part hints e.g. "2,2" could be used to solve "1___1"
 * If there is only one element in hint you can eliminate all other cells
 * If there are only two elements in hint you can eliminate all other cells if both ends are glued
-* If there is only one element in hint but cells are glued at both extremes you should do nothing
+* If there is only one element in hint but cells are glued at both extremes you should do nothing or throw an `InconsistentCellStateException`
 * This is probably not too efficient in terms of how it is managing memory and could almost certainly be improved
+
+## Testing
+
+* Do I want to break up my tests and the assertion only checks part of the row?
+    * e.g. for `GlueStrategy` differentiate checking the "glued" cells are filled and checking the cell to the immediate left or right of the glue is eliminated
 
 # Representing Data
 
