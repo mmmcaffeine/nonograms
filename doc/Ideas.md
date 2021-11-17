@@ -15,18 +15,39 @@
 * If there is only one element in hint but cells are glued at both extremes you should do nothing or throw an `InconsistentCellStateException`
 * This is probably not too efficient in terms of how it is managing memory and could almost certainly be improved
 
+## `NoSmallGapsStrategy`
+
+* This could be improved by looking at the order of the hints
+    * e.g. "5,1" and "0___0_____0_" should be able to eliminate the first gap because you know the 1 has to be to the right of the 5
+
 ## Testing
 
 * Do I want to break up my tests and the assertion only checks part of the row?
     * e.g. for `GlueStrategy` differentiate checking the "glued" cells are filled and checking the cell to the immediate left or right of the glue is eliminated
+* You need to test the input cells are not modified by the strategy
 
 # Representing Data
 
+* I've used `int`s for hints when negative or zero doesn't make sense; using a uint would probably make more sense
+    * This probably doesn't even matter if I have a `Hint` type
 * You could represent a hint as "2,2"
 * You could represent the cells as a string e.g. "100_1" to represent one filled cell, two excluded cells, one unknown cell, and finally another filled cell
 * Representing the hint and the cells as strings might make it easier to set up tests because we could then use `InlineData`
     * This would keep the test data closer to the test
     * This would keep test data shorter so having more complex test cases is more practical
+* If I had a type of `Hint`
+    * It would probably be a `record struct`
+    * This would be a good place to have
+        * Conversions between e.g. a string of "2,2" and an `int[]`
+        * A constructor accepting a paramarry of `int`
+        * The calculation for the minimum number of cells
+    * This would make validation in `StrategyBase` much easier (because `Hint` would validate its own constructor)
+* You could have a type of `Line` to represent the cells
+    * Similar notes about `Hint` would also apply to `Line`
+    * This would probably be a `record struct`
+    * Rather than converting to a `string` you would probably convert to `ReadOnlySpan<char>` and let the consumer decide when to materialize it
+    * You could define equality to `string` for e.g. `actualLine.Should().Be("100_0_1");`
+* If you had multiple ways of representing data (arrays, `strings`, and `Hint` and `Line`) it would make sense to have members on the `IStrategy` interface that accept these. They could be default interface implementations
 
 # General Things
 
