@@ -2,13 +2,6 @@
 
 public class TrivialStrategyTests
 {
-    // TODO Account for the following scenarios:
-
-    // * hint is null, contains no elements, or contains negative numbers
-    // * cells is null, or contains no elements
-    // * hint is greater than count of cells
-    // * any cell is already set to false (we don't care if any are set to false)
-
     public static TheoryData<int[], bool?[], bool?[]> MatchingHintExecuteTheoryData => new()
     {
         { new[] { 5 }, new bool?[] { null, null, null, null, null }, new bool?[] { true, true, true, true, true } },

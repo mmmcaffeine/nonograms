@@ -4,7 +4,7 @@ public class StrategyBaseTests
 {
     private class TestableStrategy : StrategyBase
     {
-        protected override bool?[] DoExecute(int[] hint, bool?[] cells)
+        protected override bool?[] Execute(int[] hint, bool?[] cells)
         {
             return cells;
         }

@@ -23,10 +23,10 @@ public abstract class StrategyBase : IStrategy
             throw new ArgumentException(message, nameof(hint));
         }
 
-        // TODO Check that what comes back from DoExecute does not conflict with the incoming cells
+        // TODO Check that what comes back from Execute does not conflict with the incoming cells
 
-        return DoExecute(hintArray, cellsArray);
+        return Execute(hintArray, cellsArray);
     }
 
-    protected abstract bool?[] DoExecute(int[] hint, bool?[] cells);
+    protected abstract bool?[] Execute(int[] hint, bool?[] cells);
 }

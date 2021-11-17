@@ -1,16 +1,13 @@
 ﻿namespace Dgt.Nonograms.Engine;
 
-public class GlueStrategy : IStrategy
+public class GlueStrategy : StrategyBase
 {
     private const int NotFound = -1;
 
-    public IEnumerable<bool?> Execute(IEnumerable<int> hint, IEnumerable<bool?> cells)
+    protected override bool?[] Execute(int[] hint, bool?[] cells)
     {
-        var hintArray = hint.ToArray();
-        var cellsArray = cells.ToArray();
-
-        var gluedLeft = ExecuteLeftGlue(hintArray[0], cellsArray);
-        var gluedRight = ExecuteRightGlue(hintArray[^1], gluedLeft);
+        var gluedLeft = ExecuteLeftGlue(hint[0], cells);
+        var gluedRight = ExecuteRightGlue(hint[^1], gluedLeft);
 
         return gluedRight;
     }

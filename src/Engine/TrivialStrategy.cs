@@ -1,17 +1,15 @@
 ﻿namespace Dgt.Nonograms.Engine;
 
-public class TrivialStrategy : IStrategy
+public class TrivialStrategy : StrategyBase
 {
-    public IEnumerable<bool?> Execute(IEnumerable<int> hint, IEnumerable<bool?> cells)
+    protected override bool?[] Execute(int[] hint, bool?[] cells)
     {
-        var hintArray = hint.ToArray();
-
-        return CanSolve(hintArray, cells)
-            ? Solve(hintArray)
+        return CanSolve(hint, cells)
+            ? Solve(hint).ToArray()
             : cells;
     }
 
-    private static bool CanSolve(int[] hint, IEnumerable<bool?> cells) => hint.Sum() + hint.Length - 1 == cells.Count();
+    private static bool CanSolve(int[] hint, bool?[] cells) => hint.Sum() + hint.Length - 1 == cells.Count();
 
     private static IEnumerable<bool?> Solve(int[] hint)
     {
