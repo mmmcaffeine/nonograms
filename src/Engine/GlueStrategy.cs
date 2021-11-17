@@ -10,7 +10,7 @@ public class GlueStrategy : IStrategy
         var cellsArray = cells.ToArray();
 
         var gluedLeft = ExecuteLeftGlue(hintArray[0], cellsArray);
-        var gluedRight  = ExecuteRightGlue(hintArray[^1], gluedLeft);
+        var gluedRight = ExecuteRightGlue(hintArray[^1], gluedLeft);
 
         return gluedRight;
     }
@@ -23,17 +23,14 @@ public class GlueStrategy : IStrategy
         if (gluedAt == NotFound) return cells;
         if (cells[0..gluedAt].Any(cell => cell is null)) return cells;
 
-        Array.Fill(glued, false, 0, gluedAt);
-        Array.Fill(glued, true, gluedAt, hint);
-
-        if(gluedAt + hint < cells.Length)
+        for (var i = 0; i < glued.Length; i++)
         {
-            glued[gluedAt + hint] = false;
-        }
-
-        for(var i = gluedAt + hint + 1; i < glued.Length; i++)
-        {
-            glued[i] = cells[i];
+            glued[i] = (i - (gluedAt + hint)) switch
+            {
+                < 0 => i >= gluedAt,
+                0   => false,
+                > 0 => cells[i]
+            };
         }
 
         return glued;
