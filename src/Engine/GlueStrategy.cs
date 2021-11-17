@@ -49,18 +49,12 @@ public class GlueStrategy : IStrategy
 
         for(var i = 0; i < glued.Length; i++)
         {
-            if (i < gluedAt - hint)
+            glued[i] = (i - (gluedAt - hint)) switch
             {
-                glued[i] = cells[i];
-            }
-            else if(i == gluedAt - hint)
-            {
-                glued[i] = false;
-            }
-            else
-            {
-                glued[i] = i <= gluedAt;
-            }
+                < 0 => cells[i],
+                0   => false,
+                > 0 => i <= gluedAt
+            };
         }
 
         return glued;
