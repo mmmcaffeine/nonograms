@@ -26,7 +26,12 @@ public class GlueStrategy : IStrategy
         Array.Fill(glued, false, 0, gluedAt);
         Array.Fill(glued, true, gluedAt, hint);
 
-        for(var i = gluedAt + hint; i <glued.Length; i++)
+        if(gluedAt + hint < cells.Length)
+        {
+            glued[gluedAt + hint] = false;
+        }
+
+        for(var i = gluedAt + hint + 1; i < glued.Length; i++)
         {
             glued[i] = cells[i];
         }
@@ -44,9 +49,13 @@ public class GlueStrategy : IStrategy
 
         for(var i = 0; i < glued.Length; i++)
         {
-            if (i <= gluedAt - hint)
+            if (i < gluedAt - hint)
             {
                 glued[i] = cells[i];
+            }
+            else if(i == gluedAt - hint)
+            {
+                glued[i] = false;
             }
             else
             {
