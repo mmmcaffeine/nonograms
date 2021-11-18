@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -16,7 +17,7 @@ public record struct Line : IEnumerable<CellState>
         _cellStates = cellStates.ToArray();
     }
 
-    public static bool TryParse(string s, out Line? result)
+    public static bool TryParse(string s, [NotNullWhen(true)] out Line? result)
     {
         var canParse = s is not null && IsValidLineString(s);
 
