@@ -20,6 +20,24 @@ public class LineTests
         { "1001..Nope" },
     };
 
+    public static TheoryData<string, CellState[]> EqualValuesTestData => new()
+    {
+        { ".", new[] { CellState.Undetermined } },
+        { ".0", new[] { CellState.Undetermined, CellState.Eliminated } },
+        { "101", new[] { CellState.Filled, CellState.Eliminated, CellState.Filled } },
+        { "..1", new[] { CellState.Undetermined, CellState.Undetermined, CellState.Filled } },
+        { "0..", new[] { CellState.Eliminated, CellState.Undetermined, CellState.Undetermined } },
+    };
+
+    public static TheoryData<string, CellState[]> NotEqualValuesTestData => new()
+    {
+        { ".", new[] { CellState.Filled } },
+        { ".0", new[] { CellState.Eliminated, CellState.Undetermined } },
+        { "101", new[] { CellState.Eliminated, CellState.Eliminated, CellState.Filled } },
+        { "..1", new[] { CellState.Undetermined, CellState.Filled, CellState.Filled } },
+        { "0..", new[] { CellState.Undetermined, CellState.Filled, CellState.Eliminated } },
+    };
+
     [Fact]
     public void Parse_Should_ThrowWhenStringIsNull()
     {
@@ -114,6 +132,41 @@ public class LineTests
 
         // Assert
         line.Should().Equal(CellState.Filled, CellState.Eliminated, CellState.Undetermined, CellState.Eliminated, CellState.Filled);
+    }
 
+    [Theory]
+    [MemberData(nameof(EqualValuesTestData))]
+    public void EqualityWithString_Should_BeTrueWhenAllharactersMatchCellStateAtSameIndex(string lineString, CellState[] cellStates)
+    {
+        // Arrange
+        var line = new Line(cellStates);
+
+        // Act, Assert
+        using(new AssertionScope())
+        {
+            (line == lineString).Should().BeTrue();
+            (line != lineString).Should().BeFalse();
+
+            (lineString == line).Should().BeTrue();
+            (lineString != line).Should().BeFalse();
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(NotEqualValuesTestData))]
+    public void EqualityWithString_Should_BeFalseWhenAnyCharacterDoesNotMatchCellStateAtSameIndex(string lineString, CellState[] cellStates)
+    {
+        // Arrange
+        var line = new Line(cellStates);
+
+        // Act, Assert
+        using (new AssertionScope())
+        {
+            (line == lineString).Should().BeFalse();
+            (line != lineString).Should().BeTrue();
+
+            (lineString == line).Should().BeFalse();
+            (lineString != line).Should().BeTrue();
+        }
     }
 }
