@@ -2,9 +2,6 @@
 
 public class NoSmallGapsStrategy : StrategyBase
 {
-    // TODO You've got lots of copying of arrays and other enumerables (because you're using yield) which you should eliminate
-    // TODO You can special case when the smallest hint is one, but then you should have tests for a multi-part hint where
-    //      where the smaller number stops you eliminating other gaps
     protected override bool?[] Execute(int[] hint, bool?[] cells)
     {
         var smallestHint = hint.Min();
@@ -46,7 +43,6 @@ public class NoSmallGapsStrategy : StrategyBase
         }
     }
 
-    // TODO Does it make sense to return a tuple of (Range Range, int Length)? That would make this data easier to consume when enumerating it
     private static IEnumerable<(int Index, int Length)> FindGaps(int[] indices, int length)
     {
         if(indices[0] > 0)

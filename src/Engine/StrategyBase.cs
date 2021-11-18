@@ -23,8 +23,6 @@ public abstract class StrategyBase : IStrategy
             throw new ArgumentException(message, nameof(hint));
         }
 
-        // TODO Check that what comes back from Execute does not conflict with the incoming cells
-
         return Execute(hintArray, cellsArray);
     }
 
