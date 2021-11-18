@@ -21,7 +21,7 @@ public record struct Line : IEnumerable<CellState>
     {
         var canParse = s is not null && IsValidLineString(s);
 
-        result = canParse ? DoParse(s!) : null;
+        result = canParse ? DoParse(s!) : (Line?)null;
 
         return result is not null;
     }
@@ -63,17 +63,49 @@ public record struct Line : IEnumerable<CellState>
     {
         for(var i = 0; i < state.Length; i++)
         {
-            span[i] = Convert(state[i]);
+            span[i] = ConvertToChar(state[i]);
         }
     });
 
-    private static char Convert(CellState cellState) => cellState switch
+    private static char ConvertToChar(CellState cellState) => cellState switch
     {
         CellState.Filled => '1',
         CellState.Eliminated=> '0',
         CellState.Undetermined => '.',
         // This only happens if someone adds an element to the enum, and that's never going to happen 😉
         _ => default
+    };
+
+    // TODO We should not really be accessing _cellStates like this. Replace this when Line exposes an indexer
+    public static implicit operator bool?[](Line l)
+    {
+        var values = new bool?[l._cellStates.Length];
+
+        for(var i = 0;i < values.Length;i++)
+        {
+            values[i] = ConvertToNullableBool(l._cellStates[i]);
+        }
+
+        return values;
+    }
+
+    private static bool? ConvertToNullableBool(CellState cellState) => cellState switch
+    {
+        CellState.Filled => true,
+        CellState.Eliminated => false,
+        CellState.Undetermined => null,
+        // This only happens if someone adds an element to the enum, and that's never going to happen 😉
+        _ => default
+    };
+
+    // Return an empty line i.e. no cell states. Can't return null because I am a struct. Explicit and throw?
+    public static implicit operator Line(bool?[] b) => new (b.Select(Convert));
+
+    private static CellState Convert(bool? b) => b switch
+    {
+        true => CellState.Filled,
+        false => CellState.Eliminated,
+        null => CellState.Undetermined,
     };
 
     IEnumerator<CellState> IEnumerable<CellState>.GetEnumerator()

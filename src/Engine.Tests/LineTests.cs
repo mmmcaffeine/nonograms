@@ -89,4 +89,31 @@ public class LineTests
         // Assert
         actual.Should().Be("10.01");
     }
+
+    [Fact]
+    public void ImplicitConversionToNullableBoolArray_Should_ReturnOneNullableBoolPerCellState()
+    {
+        // Arrange
+        var line = new Line(new[] { CellState.Filled, CellState.Eliminated, CellState.Undetermined, CellState.Eliminated, CellState.Filled });
+
+        // Act
+        bool?[] actual = line;
+
+        // Assert
+        actual.Should().Equal(true, false, null, false, true);
+    }
+
+    [Fact]
+    public void ImplicitConversionFromNullableBoolArray_Should_HaveOneCellStatePerNullalbeBool()
+    {
+        // Arrange
+        var nullableBools = new bool?[] { true, false, null, false, true };
+
+        // Act
+        Line line = nullableBools;
+
+        // Assert
+        line.Should().Equal(CellState.Filled, CellState.Eliminated, CellState.Undetermined, CellState.Eliminated, CellState.Filled);
+
+    }
 }
