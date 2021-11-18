@@ -75,4 +75,17 @@ public class LineTests
         line.Should().NotBeNull();
         line!.Value.Should().Equal(expectedCellStates);
     }
+
+    [Fact]
+    public void ImplicitConversionToString_ShouldFormatAsOnceCharacterPerCellState()
+    {
+        // Arrange
+        var line = new Line(new[] { CellState.Filled, CellState.Eliminated, CellState.Undetermined, CellState.Eliminated, CellState.Filled });
+
+        // Act
+        string actual = line;
+
+        // Assert
+        actual.Should().Be("10.01");
+    }
 }

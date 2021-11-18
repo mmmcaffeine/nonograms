@@ -10,7 +10,8 @@ public record struct Line : IEnumerable<CellState>
 
     private readonly CellState[] _cellStates;
 
-    private Line(IEnumerable<CellState> cellStates)
+    // TODO If this remains public it needs to be validated
+    public Line(IEnumerable<CellState> cellStates)
     {
         _cellStates = cellStates.ToArray();
     }
@@ -54,6 +55,24 @@ public record struct Line : IEnumerable<CellState>
         '0' => CellState.Eliminated,
         '1' => CellState.Filled,
         _   => CellState.Undetermined
+    };
+
+    // TODO We should not really be accessing _cellStates like this. Replace this when Line exposes an indexer
+    public static implicit operator string(Line l) => string.Create(l._cellStates.Length, l._cellStates, (span, state) =>
+    {
+        for(var i = 0; i < state.Length; i++)
+        {
+            span[i] = Convert(state[i]);
+        }
+    });
+
+    private static char Convert(CellState cellState) => cellState switch
+    {
+        CellState.Filled => '1',
+        CellState.Eliminated=> '0',
+        CellState.Undetermined => '.',
+        // This only happens if someone adds an element to the enum, and that's never going to happen 😉
+        _ => default
     };
 
     IEnumerator<CellState> IEnumerable<CellState>.GetEnumerator()
