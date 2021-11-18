@@ -78,7 +78,7 @@ public class LineTests
     }
 
     [Fact]
-    public void ImplicitConversionToString_ShouldFormatAsOnceCharacterPerCellState()
+    public void ImplicitConversionToString_Should_FormatAsOneCharacterPerCellState()
     {
         // Arrange
         var line = new Line(new[] { CellState.Filled, CellState.Eliminated, CellState.Undetermined, CellState.Eliminated, CellState.Filled });
