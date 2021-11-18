@@ -4,10 +4,10 @@ public class GlueStrategyTests
 {
     public static TheoryData<int[], bool?[], bool?[]> MatchingHintExecuteTheoryData => new()
     {
-        // Glued on the far right, and with nothing else to worry about
+        // Glued on the far left, and with nothing else to worry about
         { new[] { 3 }, new bool?[] { true, null, null, null, null }, new bool?[] { true, true, true, false, null } },
 
-        // Glued on the far left, and with nothing else to worry about
+        // Glued on the far right, and with nothing else to worry about
         { new[] { 3 }, new bool?[] { null, null, null, null, true }, new bool?[] { null, false, true, true, true } },
 
         // Glued on the far left, and we should preserve cells on the right
