@@ -44,4 +44,35 @@ public class LineTests
     [MemberData(nameof(ValidLineStringsTestData))]
     public void Parse_Should_ReturnLineWithCellStates(string value, CellState[] expectedCellStates) =>
         Line.Parse(value).Should().Equal(expectedCellStates);
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("NotValidLineString")]
+    [InlineData("xxxxx")]
+    [InlineData("12345")]
+    [InlineData("1001..Nope")]
+    public void TryParse_Should_ReturnFalseAndNoLineWhenStringIsNotValidLineString(string value)
+    {
+        // Arrange, Act
+        var parsed = Line.TryParse(value, out var line);
+
+        // Assert
+        parsed.Should().BeFalse();
+        line.Should().BeNull();
+
+    }
+
+    [Theory]
+    [MemberData(nameof(ValidLineStringsTestData))]
+    public void TryParse_Should_ReturnTrueAndLineWhenStringIsValidLineString(string value, CellState[] expectedCellStates)
+    {
+        // Arrange, Act
+        var parsed = Line.TryParse(value, out var line);
+
+        // Assert
+        parsed.Should().BeTrue();
+        line.Should().NotBeNull();
+        line!.Value.Should().Equal(expectedCellStates);
+    }
 }

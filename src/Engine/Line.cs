@@ -15,15 +15,24 @@ public record struct Line : IEnumerable<CellState>
         _cellStates = cellStates.ToArray();
     }
 
+    public static bool TryParse(string s, out Line? result)
+    {
+        var canParse = s is not null && IsValidLineString(s);
+
+        result = canParse ? DoParse(s!) : null;
+
+        return result is not null;
+    }
+
     public static Line Parse(string s)
     {
         if (s is null) throw new ArgumentNullException(nameof(s));
-        if (!ParseRegex.IsMatch(s)) throw CreateInvalidLineStringException(s);
+        if (!IsValidLineString(s)) throw CreateInvalidLineStringException(s);
 
-        var cellStates = s.Select(Convert);
-
-        return new Line(cellStates);
+        return DoParse(s);
     }
+
+    private static bool IsValidLineString(string s) => ParseRegex.IsMatch(s);
 
     private static Exception CreateInvalidLineStringException(string s)
     {
@@ -37,6 +46,8 @@ public record struct Line : IEnumerable<CellState>
             Data = { { "s", s } }
         };
     }
+
+    private static Line DoParse(string s) => new(s.Select(Convert));
 
     private static CellState Convert(char c) => c switch
     {
