@@ -9,7 +9,7 @@ public class TrivialStrategy : StrategyBase
             : cells;
     }
 
-    private static bool CanSolve(int[] hint, bool?[] cells) => hint.Sum() + hint.Length - 1 == cells.Count();
+    private static bool CanSolve(int[] hint, bool?[] cells) => hint.Sum() + hint.Length - 1 == cells.Length;
 
     private static IEnumerable<bool?> Solve(int[] hint)
     {
