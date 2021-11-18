@@ -108,6 +108,21 @@ public record struct Line : IEnumerable<CellState>
         null => CellState.Undetermined,
     };
 
+    public int Length => _cellStates.Length;
+
+    public CellState this[int index]
+    {
+        get
+        {
+            if(index < 0 || index >= Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), index, $"Index was out of range. Must be non-negative and less than the length of the line ({Length}).");
+            }
+
+            return _cellStates[index];
+        }
+    }
+
     IEnumerator<CellState> IEnumerable<CellState>.GetEnumerator()
     {
         return _cellStates.AsEnumerable().GetEnumerator();

@@ -169,4 +169,48 @@ public class LineTests
             (lineString != line).Should().BeTrue();
         }
     }
+
+    [Theory]
+    [InlineData(".")]
+    [InlineData("111000")]
+    [InlineData("1010101010")]
+    public void Length_Should_BeLengthOfArray(string value) => Line.Parse(value).Length.Should().Be(value.Length);
+
+    [Fact]
+    public void Indexer_Should_ReturnCellStateAtIndex()
+    {
+        // Arrange
+        var line = new Line(new[] {CellState.Filled, CellState.Eliminated, CellState.Undetermined, CellState.Filled});
+
+        // Act, Assert
+        using (new AssertionScope())
+        {
+            line[0].Should().Be(CellState.Filled);
+            line[1].Should().Be(CellState.Eliminated);
+            line[2].Should().Be(CellState.Undetermined);
+            line[3].Should().Be(CellState.Filled);
+        }
+    }
+
+    [Theory]
+    [InlineData(int.MinValue)]
+    [InlineData(-1)]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(int.MaxValue)]
+    public void Indexer_Should_ThrowWhenIndexIsNegativeOrGreaterThanLength(int index)
+    {
+        // Arrange
+        var line = new Line(new[] { CellState.Filled, CellState.Eliminated, CellState.Undetermined, CellState.Filled });
+
+        // Act
+        var act = () => _ = line[index];
+
+        // Assert
+        act.Should().Throw<ArgumentOutOfRangeException>()
+            .WithParameterName("index")
+            .WithMessage("*Index was out of range. Must be non-negative and less than the length of the line (4).*")
+            .Where(ex => ex.ActualValue != null && Equals(ex.ActualValue,index));
+
+    }
 }
