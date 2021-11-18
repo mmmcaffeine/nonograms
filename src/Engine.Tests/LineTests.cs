@@ -11,6 +11,15 @@ public class LineTests
         { "._- ", new[] { CellState.Undetermined, CellState.Undetermined, CellState.Undetermined, CellState.Undetermined } }
     };
 
+    public static TheoryData<string?> InvalidLineStringsTestData => new()
+    {
+        { string.Empty },
+        { "NotValidLineString" },
+        { "xxxxx" },
+        { "12345" },
+        { "1001..Nope" },
+    };
+
     [Fact]
     public void Parse_Should_ThrowWhenStringIsNull()
     {
@@ -22,11 +31,7 @@ public class LineTests
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("NotValidLineString")]
-    [InlineData("xxxxx")]
-    [InlineData("12345")]
-    [InlineData("1001..Nope")]
+    [MemberData(nameof(InvalidLineStringsTestData))]
     public void Parse_Should_ThrowWhenStringIsNotValidLineString(string value)
     {
         // Arrange, Act
@@ -47,11 +52,7 @@ public class LineTests
 
     [Theory]
     [InlineData(null)]
-    [InlineData("")]
-    [InlineData("NotValidLineString")]
-    [InlineData("xxxxx")]
-    [InlineData("12345")]
-    [InlineData("1001..Nope")]
+    [MemberData(nameof(InvalidLineStringsTestData))]
     public void TryParse_Should_ReturnFalseAndNoLineWhenStringIsNotValidLineString(string value)
     {
         // Arrange, Act
