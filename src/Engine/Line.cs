@@ -58,8 +58,7 @@ public record struct Line : IEnumerable<CellState>
         _   => CellState.Undetermined
     };
 
-    // TODO We should not really be accessing _cellStates like this. Replace this when Line exposes an indexer
-    public static implicit operator string(Line l) => string.Create(l._cellStates.Length, l._cellStates, (span, state) =>
+    public static implicit operator string(Line l) => string.Create(l.Length, l, (span, state) =>
     {
         for(var i = 0; i < state.Length; i++)
         {
@@ -76,14 +75,13 @@ public record struct Line : IEnumerable<CellState>
         _ => default
     };
 
-    // TODO We should not really be accessing _cellStates like this. Replace this when Line exposes an indexer
     public static implicit operator bool?[](Line l)
     {
-        var values = new bool?[l._cellStates.Length];
+        var values = new bool?[l.Length];
 
         for(var i = 0;i < values.Length;i++)
         {
-            values[i] = ConvertToNullableBool(l._cellStates[i]);
+            values[i] = ConvertToNullableBool(l[i]);
         }
 
         return values;
