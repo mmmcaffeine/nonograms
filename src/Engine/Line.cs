@@ -24,7 +24,7 @@ public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
     {
         var canParse = s is not null && IsValidLineString(s);
 
-        result = canParse ? DoParse(s!) : (Line?)null;
+        result = canParse ? DoParse(s!) : null;
 
         return result is not null;
     }
