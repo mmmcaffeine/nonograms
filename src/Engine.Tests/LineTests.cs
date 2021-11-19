@@ -8,7 +8,6 @@ public class LineTests
         { "00", new[] { CellState.Eliminated, CellState.Eliminated } },
         { "...", new[] { CellState.Undetermined, CellState.Undetermined, CellState.Undetermined } },
         { "1.001..", new[] { CellState.Filled, CellState.Undetermined, CellState.Eliminated, CellState.Eliminated, CellState.Filled, CellState.Undetermined, CellState.Undetermined } },
-        { "._- ", new[] { CellState.Undetermined, CellState.Undetermined, CellState.Undetermined, CellState.Undetermined } }
     };
 
     public static TheoryData<string?> InvalidLineStringsTestData => new()

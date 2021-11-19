@@ -8,6 +8,7 @@ namespace Dgt.Nonograms.Engine;
 public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
 {
     private static readonly Regex ParseRegex = new(@"^[01._\- ]+$");
+    private static readonly List<CellState> ValidCellStates = new() { CellState.Filled, CellState.Eliminated, CellState.Undetermined };
 
     private readonly CellState[] _cellStates;
 
@@ -53,12 +54,7 @@ public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
 
     private static Line DoParse(string s) => new(s.Select(Convert));
 
-    private static CellState Convert(char c) => c switch
-    {
-        '0' => CellState.Eliminated,
-        '1' => CellState.Filled,
-        _   => CellState.Undetermined
-    };
+    private static CellState Convert(char c) => ValidCellStates.First(state => state.Character == c);
 
     public static implicit operator string(Line l)
     {
@@ -76,14 +72,7 @@ public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
         });
     }
 
-    private static char ConvertToChar(CellState cellState) => cellState switch
-    {
-        CellState.Filled => '1',
-        CellState.Eliminated=> '0',
-        CellState.Undetermined => '.',
-        // This only happens if someone adds an element to the enum, and that's never going to happen 😉
-        _ => default
-    };
+    private static char ConvertToChar(CellState cellState) => cellState.Character;
 
     public static implicit operator bool?[](Line l)
     {
@@ -102,14 +91,7 @@ public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
         return values;
     }
 
-    private static bool? ConvertToNullableBool(CellState cellState) => cellState switch
-    {
-        CellState.Filled => true,
-        CellState.Eliminated => false,
-        CellState.Undetermined => null,
-        // This only happens if someone adds an element to the enum, and that's never going to happen 😉
-        _ => default
-    };
+    private static bool? ConvertToNullableBool(CellState cellState) => cellState.Boolean;
 
     public static implicit operator Line(bool?[] b)
     {
@@ -121,12 +103,7 @@ public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
         return new(b.Select(Convert));
     }
 
-    private static CellState Convert(bool? b) => b switch
-    {
-        true => CellState.Filled,
-        false => CellState.Eliminated,
-        null => CellState.Undetermined,
-    };
+    private static CellState Convert(bool? b) => ValidCellStates.First(cs => cs.Boolean == b);
 
     public int Length => _cellStates.Length;
 
