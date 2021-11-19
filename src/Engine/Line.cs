@@ -13,9 +13,10 @@ public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
 
     public static readonly Line Empty = new(Array.Empty<CellState>());
 
-    // TODO If this remains public it needs to be validated
     public Line(IEnumerable<CellState> cellStates)
     {
+        if(cellStates is null) throw new ArgumentNullException(nameof(cellStates));
+
         _cellStates = cellStates.ToArray();
     }
 

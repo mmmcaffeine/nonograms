@@ -38,6 +38,16 @@ public class LineTests
     };
 
     [Fact]
+    public void Ctor_Should_ThrowWhenCellStatesIsNull()
+    {
+        // Arrange, Act
+        var act = () => _ = new Line(null!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>().WithParameterName("cellStates");
+    }
+
+    [Fact]
     public void Parse_Should_ThrowWhenStringIsNull()
     {
         // Arrange, Act
