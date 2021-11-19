@@ -165,7 +165,7 @@ public class LineTests
 
     [Theory]
     [MemberData(nameof(EqualValuesTestData))]
-    public void EqualityWithString_Should_BeTrueWhenAllharactersMatchCellStateAtSameIndex(string lineString, CellState[] cellStates)
+    public void EqualityWithString_Should_BeTrueWhenAllCharactersMatchCellStateAtSameIndex(string lineString, CellState[] cellStates)
     {
         // Arrange
         var line = new Line(cellStates);
