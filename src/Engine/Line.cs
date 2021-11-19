@@ -8,7 +8,6 @@ namespace Dgt.Nonograms.Engine;
 public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
 {
     private static readonly Regex ParseRegex = new(@"^[01._\- ]+$");
-    private static readonly List<CellState> ValidCellStates = new() { CellState.Filled, CellState.Eliminated, CellState.Undetermined };
 
     private readonly CellState[] _cellStates;
 
@@ -52,9 +51,7 @@ public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
         };
     }
 
-    private static Line DoParse(string s) => new(s.Select(Convert));
-
-    private static CellState Convert(char c) => ValidCellStates.First(state => state.Character == c);
+    private static Line DoParse(string s) => new(s.Select(c => (CellState)c));
 
     public static implicit operator string(Line l)
     {
@@ -67,12 +64,10 @@ public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
         {
             for (var i = 0; i < state.Length; i++)
             {
-                span[i] = ConvertToChar(state[i]);
+                span[i] = state[i];
             }
         });
     }
-
-    private static char ConvertToChar(CellState cellState) => cellState.Character;
 
     public static implicit operator bool?[](Line l)
     {
@@ -83,15 +78,13 @@ public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
 
         var values = new bool?[l.Length];
 
-        for(var i = 0;i < values.Length;i++)
+        for (var i = 0; i < values.Length; i++)
         {
-            values[i] = ConvertToNullableBool(l[i]);
+            values[i] = l[i];
         }
 
         return values;
     }
-
-    private static bool? ConvertToNullableBool(CellState cellState) => cellState.Boolean;
 
     public static implicit operator Line(bool?[] b)
     {
@@ -100,10 +93,10 @@ public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
             return Empty;
         }
 
-        return new(b.Select(Convert));
-    }
+        var cellStates = b.Select(x => (CellState)x);
 
-    private static CellState Convert(bool? b) => ValidCellStates.First(cs => cs.Boolean == b);
+        return new(cellStates);
+    }
 
     public int Length => _cellStates.Length;
 
