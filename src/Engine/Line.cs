@@ -5,11 +5,13 @@ using System.Text.RegularExpressions;
 
 namespace Dgt.Nonograms.Engine;
 
-public record struct Line : IEnumerable<CellState>
+public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
 {
     private static readonly Regex ParseRegex = new(@"^[01._\- ]+$");
 
     private readonly CellState[] _cellStates;
+
+    public static readonly Line Empty = new(Array.Empty<CellState>());
 
     // TODO If this remains public it needs to be validated
     public Line(IEnumerable<CellState> cellStates)
@@ -58,13 +60,21 @@ public record struct Line : IEnumerable<CellState>
         _   => CellState.Undetermined
     };
 
-    public static implicit operator string(Line l) => string.Create(l.Length, l, (span, state) =>
+    public static implicit operator string(Line l)
     {
-        for(var i = 0; i < state.Length; i++)
+        if (l is null)
         {
-            span[i] = ConvertToChar(state[i]);
+            return string.Empty;
         }
-    });
+
+        return string.Create(l.Length, l, (span, state) =>
+        {
+            for (var i = 0; i < state.Length; i++)
+            {
+                span[i] = ConvertToChar(state[i]);
+            }
+        });
+    }
 
     private static char ConvertToChar(CellState cellState) => cellState switch
     {
@@ -77,6 +87,11 @@ public record struct Line : IEnumerable<CellState>
 
     public static implicit operator bool?[](Line l)
     {
+        if(l is null)
+        {
+            return Array.Empty<bool?>();
+        }
+
         var values = new bool?[l.Length];
 
         for(var i = 0;i < values.Length;i++)
@@ -96,8 +111,15 @@ public record struct Line : IEnumerable<CellState>
         _ => default
     };
 
-    // Return an empty line i.e. no cell states. Can't return null because I am a struct. Explicit and throw?
-    public static implicit operator Line(bool?[] b) => new (b.Select(Convert));
+    public static implicit operator Line(bool?[] b)
+    {
+        if(b is null)
+        {
+            return Empty;
+        }
+
+        return new(b.Select(Convert));
+    }
 
     private static CellState Convert(bool? b) => b switch
     {
@@ -120,6 +142,51 @@ public record struct Line : IEnumerable<CellState>
             return _cellStates[index];
         }
     }
+
+    public bool Equals(Line? other)
+    {
+        if(other is null)
+        {
+            return false;
+        }
+        else if(ReferenceEquals(this, other))
+        {
+            return true;
+        }
+        else if(other.Length != Length)
+        {
+            return false;
+        }
+
+        // We could cast both to string and compare those, but this avoids the allocations that would occur with that implementation
+        for(var i = 0; i < Length; i++)
+        {
+            if(this[i] != other[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if(obj is null)
+        {
+            return false;
+        }
+        else if(obj is Line l)
+        {
+            return Equals(l);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public override int GetHashCode() => ((string)this).GetHashCode();
 
     IEnumerator<CellState> IEnumerable<CellState>.GetEnumerator()
     {

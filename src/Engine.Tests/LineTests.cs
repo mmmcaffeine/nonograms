@@ -92,7 +92,17 @@ public class LineTests
         // Assert
         parsed.Should().BeTrue();
         line.Should().NotBeNull();
-        line!.Value.Should().Equal(expectedCellStates);
+        line.Should().Equal(expectedCellStates);
+    }
+
+    [Fact]
+    public void ImplicitConversionToString_Should_ReturnEmptyWhenLineIsNull()
+    {
+        // Arrange, Act
+        string actual = (Line)null!;
+
+        // Assert
+        actual.Should().BeEmpty();
     }
 
     [Fact]
@@ -102,14 +112,24 @@ public class LineTests
         var line = new Line(new[] { CellState.Filled, CellState.Eliminated, CellState.Undetermined, CellState.Eliminated, CellState.Filled });
 
         // Act
-        string actual = line;
+        string? actual = line;
 
         // Assert
         actual.Should().Be("10.01");
     }
 
     [Fact]
-    public void ImplicitConversionToNullableBoolArray_Should_ReturnOneNullableBoolPerCellState()
+    public void ImplicitConversionToArrayOfNullableBool_Should_ReturnEmptyArrayWhenLineIsNull()
+    {
+        // Arrange, Act
+        bool?[] actual = (Line)null!;
+
+        // Assert
+        actual.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ImplicitConversionToArrayOfNullableBool_Should_ReturnOneNullableBoolPerCellState()
     {
         // Arrange
         var line = new Line(new[] { CellState.Filled, CellState.Eliminated, CellState.Undetermined, CellState.Eliminated, CellState.Filled });
@@ -122,7 +142,17 @@ public class LineTests
     }
 
     [Fact]
-    public void ImplicitConversionFromNullableBoolArray_Should_HaveOneCellStatePerNullalbeBool()
+    public void ImplicitConversionFromArrayOfNullableBool_Should_ReturnEmptyLineWhenArrayIsNull()
+    {
+        // Arrange, Act
+        Line line = (bool?[])null!;
+
+        // Assert
+        line.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ImplicitConversionFromArrayOfNullableBool_Should_HaveOneCellStatePerNullalbeBool()
     {
         // Arrange
         var nullableBools = new bool?[] { true, false, null, false, true };
@@ -169,6 +199,82 @@ public class LineTests
             (lineString != line).Should().BeTrue();
         }
     }
+
+    [Fact]
+    public void EquatableEquals_Should_BeFalseWhenOtherIsNull()
+    {
+        // Arrange
+        IEquatable<Line> equatable = new Line(new[] { CellState.Filled });
+
+        // Act, Assert
+        equatable.Equals(null).Should().BeFalse();
+    }
+
+    [Theory]
+    [MemberData(nameof(EqualValuesTestData))]
+    public void EquatableEquals_Should_BeTrueWhenCharactersMatchCellStateAtSameIndex(string lineString, CellState[] cellStates)
+    {
+        // Arrange
+        var line = Line.Parse(lineString);
+        IEquatable<Line> equatable = new Line(cellStates);
+        
+        // Act, Assert
+        equatable.Equals(line).Should().BeTrue();
+    }
+
+    [Theory]
+    [MemberData(nameof(NotEqualValuesTestData))]
+    public void EquatableEquals_Should_BeFalseWhenAnyCharacterDoesNotMatchCellStateAtSameIndex(string lineString, CellState[] cellStates)
+    {
+        // Arrange
+        var line = Line.Parse(lineString);
+        IEquatable<Line> equatable = new Line(cellStates);
+
+        // Act, Assert
+        equatable.Equals(line).Should().BeFalse();
+    }
+
+    // The cast ensures we get the right overload of Equals; we're testing the version inherited from object, not the version on the
+    // IEquatable interface
+    [Fact]
+    public void Equals_Should_BeFalseWhenObjIsNull() => new Line(new[] { CellState.Filled }).Equals((object?)null).Should().BeFalse();
+
+    // The cast ensures we get the right overload of Equals; we're testing the version inherited from object, not the version on the
+    // IEquatable interface
+    [Theory]
+    [MemberData(nameof(EqualValuesTestData))]
+    public void Equals_Should_BeTrueWhenAllCharactersMatchCellStateAtSameIndex(string lineString, CellState[] cellStates)
+    {
+        // Arrange
+        var a = Line.Parse(lineString);
+        var b = new Line(cellStates);
+
+        // Act, Assert
+        a.Equals((object)b).Should().BeTrue();
+        b.Equals((object)a).Should().BeTrue();
+    }
+
+    // The cast ensures we get the right overload of Equals; we're testing the version inherited from object, not the version on the
+    // IEquatable interface
+    [Theory]
+    [MemberData(nameof(NotEqualValuesTestData))]
+    public void Equals_Should_BeFalseWhenAnyCharacterDoesNotMatchCellStateAtSameIndex(string lineString, CellState[] cellStates)
+    {
+        // Arrange
+        var a = Line.Parse(lineString);
+        var b = new Line(cellStates);
+
+        // Act, Assert
+        a.Equals((object)b).Should().BeFalse();
+        b.Equals((object)a).Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData(".")]
+    [InlineData("0")]
+    [InlineData("1")]
+    [InlineData("10.01")]
+    public void GetHashCode_Should_ReturnHasCodeOfStringRepresentation(string line) => Line.Parse(line).GetHashCode().Should().Be(line.GetHashCode());
 
     [Theory]
     [InlineData(".")]
