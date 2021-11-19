@@ -2,7 +2,7 @@
 
 public class NoSmallGapsStrategyTests
 {
-    public static TheoryData<int[], bool?[], bool?[]> TheoryData => new()
+    public static TheoryData<int[], Line, Line> TheoryData => new()
     {
         // Hint of 1 means we can't eliminate any gaps because any gap could be the filled cell
         { new[] { 1 }, new bool?[] { false, null, false, null, null, false }, new bool?[] { false, null, false, null, null, false } },
@@ -17,6 +17,6 @@ public class NoSmallGapsStrategyTests
 
     [Theory]
     [MemberData(nameof(TheoryData))]
-    public void Execute_Should_EliminateAnyGapsSmallerThanSmallestHint(int[] hint, bool?[] cells, bool?[] expected) =>
-        new NoSmallGapsStrategy().Execute(hint, cells).Should().Equal(expected);
+    public void Execute_Should_EliminateAnyGapsSmallerThanSmallestHint(int[] hint, Line line, Line expected) =>
+        new NoSmallGapsStrategy().Execute(hint, line).Should().Equal(expected);
 }

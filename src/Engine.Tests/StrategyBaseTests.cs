@@ -46,7 +46,7 @@ public class StrategyBaseTests
     }
 
     [Fact]
-    public void Execute_Should_ThrowWhenCellsIsNull()
+    public void Execute_Should_ThrowWhenLineIsNull()
     {
         // Arrange
         var sut = new TestableStrategy();
@@ -55,11 +55,11 @@ public class StrategyBaseTests
         var act = () => _ = sut.Execute(new[] { 1 }, null!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("cells");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("line");
     }
 
     [Fact]
-    public void Execute_Should_ThrowWhenCellsIsEmpty()
+    public void Execute_Should_ThrowWhenLineIsEmpty()
     {
         // Arrange
         var sut = new TestableStrategy();
@@ -69,7 +69,7 @@ public class StrategyBaseTests
 
         // Assert
         act.Should().Throw<ArgumentException>()
-            .WithParameterName("cells")
+            .WithParameterName("line")
             .WithMessage("Value must contain at least one item.*");
     }
 

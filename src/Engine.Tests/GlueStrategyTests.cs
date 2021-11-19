@@ -2,7 +2,7 @@
 
 public class GlueStrategyTests
 {
-    public static TheoryData<int[], bool?[], bool?[]> MatchingHintExecuteTheoryData => new()
+    public static TheoryData<int[], Line, Line> MatchingHintExecuteTheoryData => new()
     {
         // Glued on the far left, and with nothing else to worry about
         { new[] { 3 }, new bool?[] { true, null, null, null, null }, new bool?[] { true, true, true, false, null } },
@@ -23,7 +23,7 @@ public class GlueStrategyTests
         { new[] { 2 }, new bool?[] { null, false, null, null, true, false }, new bool?[] { null, false, false, true, true, false } }
     };
 
-    public static TheoryData<int[], bool?[]> NotMatchingHintExecuteTheoryData => new()
+    public static TheoryData<int[], Line> NotMatchingHintExecuteTheoryData => new()
     {
         { new[] { 3 }, new bool?[] { null, null, null, null, null } },
         { new[] { 3 }, new bool?[] { false, null, null, null, null } },
@@ -34,11 +34,11 @@ public class GlueStrategyTests
 
     [Theory]
     [MemberData(nameof(MatchingHintExecuteTheoryData))]
-    public void Execute_Should_FillCellsAtEdgeOfGridWhenCellAtEdgeIsFilled(int[] hint, bool?[] cells, bool?[] expected) =>
-        new GlueStrategy().Execute(hint, cells).Should().Equal(expected);
+    public void Execute_Should_FillCellsAtEdgeOfGridWhenCellAtEdgeIsFilled(int[] hint, Line line, Line expected) =>
+        new GlueStrategy().Execute(hint, line).Should().Equal(expected);
 
     [Theory]
     [MemberData(nameof(NotMatchingHintExecuteTheoryData))]
-    public void Execute_Should_ReturnUnalteredCellsWhenCellAtEdgeOfGridIsNotFilled(int[] hint, bool?[] cells) =>
-        new GlueStrategy().Execute(hint, cells).Should().Equal(cells);
+    public void Execute_Should_ReturnUnalteredCellsWhenCellAtEdgeOfGridIsNotFilled(int[] hint, Line line) =>
+        new GlueStrategy().Execute(hint, line).Should().Equal(line);
 }
