@@ -7,7 +7,20 @@ namespace Dgt.Nonograms.Engine;
 
 public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
 {
-    private static readonly Regex ParseRegex = new(@"^[01._\- ]+$");
+    private static readonly Regex ParseRegex = new(BuildParsePattern());
+
+    private static string BuildParsePattern()
+    {
+        var characters = string.Create(CellState.All.Count, CellState.All, (span, state) =>
+        {
+            for (var i = 0; i < span.Length; i++)
+            {
+                span[i] = state[i];
+            }
+        });
+
+        return $@"^[{characters}]+$";
+    }
 
     private readonly CellState[] _cellStates;
 
@@ -43,7 +56,22 @@ public sealed class Line : IEnumerable<CellState>, IEquatable<Line>
     {
         var messageBuilder = new StringBuilder("The input string was not in a correct format.");
 
-        messageBuilder.Append(" Lines can only consist of '1' (filled), '0' (eliminated), and any of '.', '_', '-', or ' ' (undetermined).");
+        messageBuilder.Append(" Lines can only consist of");
+
+        for(var i = 0; i < CellState.All.Count; i++)
+        {
+            var isLastItem = i == CellState.All.Count - 1;
+            var cellState = CellState.All[i];
+
+            if (isLastItem)
+            {
+                messageBuilder.Append(" or");
+            }
+
+            messageBuilder.Append($" '{cellState.Character}' ({cellState.Description})");
+            messageBuilder.Append(isLastItem ? '.' : ',');
+        }
+
         messageBuilder.Append($" Actual value was '{s}'.");
 
         throw new FormatException(messageBuilder.ToString())

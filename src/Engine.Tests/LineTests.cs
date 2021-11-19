@@ -67,7 +67,7 @@ public class LineTests
         // Assert
         act.Should().Throw<FormatException>()
             .WithMessage("*Input string was not in a correct format.*")
-            .WithMessage("*Lines can only consist of '1' (filled), '0' (eliminated), and any of '.', '_', '-', or ' ' (undetermined).*")
+            .WithMessage("*Lines can only consist of '1' (Filled), '0' (Eliminated), or '.' (Undetermined).*")
             .WithMessage($"*Actual value was '{value}'.*")
             .Where(ex => ex.Data.Contains("s") && Equals(ex.Data["s"], value));
     }
@@ -326,6 +326,5 @@ public class LineTests
             .WithParameterName("index")
             .WithMessage("*Index was out of range. Must be non-negative and less than the length of the line (4).*")
             .Where(ex => ex.ActualValue != null && Equals(ex.ActualValue,index));
-
     }
 }
