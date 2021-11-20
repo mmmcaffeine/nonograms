@@ -10,7 +10,7 @@ public class StrategyBaseTests
         }
     }
 
-    public static TheoryData<int, int[], bool?[]> InvalidHintTestData => new()
+    public static TheoryData<int, int[], Line> InvalidHintTestData => new()
     {
         { 5, new[] { 5 }, Line.Parse("1010") },
         { 7, new[] { 3, 3 }, Line.Parse("000") },
@@ -75,18 +75,18 @@ public class StrategyBaseTests
 
     [Theory]
     [MemberData(nameof(InvalidHintTestData))]
-    public void Execute_Should_Throw_WhenHintIsGreaterThanCells(int minimumCells, int[] hint, bool?[] cells)
+    public void Execute_Should_Throw_WhenHintIsGreaterThanCells(int minimumCells, int[] hint, Line line)
     {
         // Arrange
         var sut = new TestableStrategy();
 
         // Act
-        var act = () => _ = sut.Execute(hint, cells);
+        var act = () => _ = sut.Execute(hint, line);
 
         // Assert
         act.Should().Throw<ArgumentException>()
             .WithParameterName("hint")
             .WithMessage("It is not possible to fill in enough cells to fulfil the hint.*")
-            .WithMessage($"*The hint would require at least {minimumCells} cells, but there are only {cells.Length}.*");
+            .WithMessage($"*The hint would require at least {minimumCells} cells, but there are only {line.Length}.*");
     }
 }
