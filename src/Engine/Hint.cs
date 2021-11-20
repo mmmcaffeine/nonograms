@@ -62,4 +62,37 @@ public sealed class Hint
             return _elements[index];
         }
     }
+
+    public static Hint Parse(string s)
+    {
+        if (s is null) throw new ArgumentNullException(nameof(s));
+
+        var elements = s.Split(',')
+            .Select(e => e.Trim())
+            .Select(value => uint.TryParse(value, out var result) ? (Value: result, Success: true) : (0, false))
+            .ToList();
+
+        if (elements.Count == 0 || elements.Any(e => !e.Success || e.Value == 0))
+        {
+            throw CreateInvalidHintStringException(s);
+        }
+
+        // Unsure why the cast is needed. The compiler is smart enough to know Value is a uint when it is returned in the tuple, but
+        // not when we do the Select against the tuple 😕
+
+        return new Hint(elements.Select(e => (uint)e.Value));
+    }
+
+    private static Exception CreateInvalidHintStringException(string s)
+    {
+        var messageBuilder = new StringBuilder("The input string was not in a correct format.");
+
+        messageBuilder.Append(" A hint must be a comma delimited list of integers with no zeros.");
+        messageBuilder.Append($" Actual value was '{s}'.");
+
+        throw new FormatException(messageBuilder.ToString())
+        {
+            Data = { { "s", s } }
+        };
+    }
 }

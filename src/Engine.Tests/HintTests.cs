@@ -87,4 +87,58 @@ public class HintTests
             .WithMessage("*Index was out of range. Must be non-negative and less than the length of the hint (3).*")
             .Where(ex => ex.ActualValue != null && Equals(ex.ActualValue, index));
     }
+
+    [Fact]
+    public void Parse_Should_ThrowWhenStringIsNull()
+    {
+        // Arrange, Act
+        var act = () => _ = Hint.Parse(null!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>().WithParameterName("s");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("one")]
+    [InlineData("1,three")]
+    [InlineData("0,1")]
+    [InlineData("1,0")]
+    [InlineData("1,,1")]
+    [InlineData(",1")]
+    [InlineData("1,")]
+    public void Parse_Should_ThrowWhenStringIsNotValidHintString(string value)
+    {
+        // Arrange, Act
+        var act = () => _ = _ = Hint.Parse(value);
+
+        // Assert
+        act.Should().Throw<FormatException>()
+            .WithMessage("*Input string was not in a correct format.*")
+            .WithMessage("* A hint must be a comma delimited list of integers with no zeros.*")
+            .WithMessage($"*Actual value was '{value}'.*")
+            .Where(ex => ex.Data.Contains("s") && Equals(ex.Data["s"], value));
+    }
+
+    [Theory]
+    [InlineData("1", 1u)]
+    [InlineData("1,10", 1u, 10u)]
+    [InlineData("5,6,3", 5u,6u,3u)]
+    public void Parse_Should_ParseElementsInOrderFromCommaDelimitedListOfNumbers(string value, params uint[] elements)
+    {
+        // Arrange, Act
+        var hint = Hint.Parse(value);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            hint.Length.Should().Be(elements.Length);
+
+            for (var i = 0; i < elements.Length; i++)
+            {
+                hint[i].Should().Be(elements[i]);
+            }
+        }
+    }
 }
