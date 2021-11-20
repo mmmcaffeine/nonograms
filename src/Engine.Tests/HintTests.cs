@@ -46,4 +46,48 @@ public class HintTests
             .WithMessage($"*Found {messageFragment}.*")
             .Where(ex => ex.Data.Contains("elements") && ReferenceEquals(ex.Data["elements"], uintElements));
     }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2, 3)]
+    [InlineData(4, 5, 6)]
+    public void Length_Should_BeLengthOfArray(params int[] elements) =>
+        new Hint(elements.Cast<uint>()).Length.Should().Be(elements.Length);
+
+    [Fact]
+    public void Indexer_Should_ReturnElementAtIndex()
+    {
+        // Arrange
+        var hint = new Hint(new uint [] { 1, 3, 2, 6 });
+
+        // Act, Assert
+        using (new AssertionScope())
+        {
+            hint[0].Should().Be(1);
+            hint[1].Should().Be(3);
+            hint[2].Should().Be(2);
+            hint[3].Should().Be(6);
+        }
+    }
+
+    [Theory]
+    [InlineData(int.MinValue)]
+    [InlineData(-1)]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(int.MaxValue)]
+    public void Indexer_Should_ThrowWhenIndexIsNegativeOrGreaterThanLength(int index)
+    {
+        // Arrange
+        var hint = new Hint(new uint[] { 3, 5, 1 });
+
+        // Act
+        var act = () => _ = hint[index];
+
+        // Assert
+        act.Should().Throw<ArgumentOutOfRangeException>()
+            .WithParameterName("index")
+            .WithMessage("*Index was out of range. Must be non-negative and less than the length of the hint (3).*")
+            .Where(ex => ex.ActualValue != null && Equals(ex.ActualValue, index));
+    }
 }

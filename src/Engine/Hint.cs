@@ -47,4 +47,19 @@ public sealed class Hint
             Data = { { paramName, actualValue} }
         };
     }
+
+    public int Length => _elements.Length;
+
+    public uint this[int index]
+    {
+        get
+        {
+            if (index < 0 || index >= Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), index, $"Index was out of range. Must be non-negative and less than the length of the hint ({Length}).");
+            }
+
+            return _elements[index];
+        }
+    }
 }
