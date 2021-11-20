@@ -12,9 +12,9 @@ public class StrategyBaseTests
 
     public static TheoryData<int, int[], bool?[]> InvalidHintTestData => new()
     {
-        { 5, new[] { 5 }, new bool?[] { true, false, true, false } },
-        { 7, new[] { 3, 3 }, new bool?[] { false, false, false } },
-        { 6, new[] { 1, 2, 1 }, new bool?[] { null, null } }
+        { 5, new[] { 5 }, Line.Parse("1010") },
+        { 7, new[] { 3, 3 }, Line.Parse("000") },
+        { 6, new[] { 1, 2, 1 }, Line.Parse("..") }
     };
 
     [Fact]

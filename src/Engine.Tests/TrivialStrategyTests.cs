@@ -4,17 +4,17 @@ public class TrivialStrategyTests
 {
     public static TheoryData<int[], Line, Line> MatchingHintExecuteTheoryData => new()
     {
-        { new[] { 5 }, new bool?[] { null, null, null, null, null }, new bool?[] { true, true, true, true, true } },
-        { new[] { 2, 2 }, new bool?[] { null, null, null, null, null }, new bool?[] { true, true, false, true, true } },
-        { new[] { 1, 1, 1 }, new bool?[] { null, null, null, null, null }, new bool?[] { true, false, true, false, true } },
-        { new[] { 3, 3 }, new bool?[] { null, null, null, null, null, null, null }, new bool?[] { true, true, true, false, true, true, true } }
+        { new[] { 5 }, Line.Parse("....."), Line.Parse("11111") },
+        { new[] { 2, 2 }, Line.Parse("....."), Line.Parse("11011") },
+        { new[] { 1, 1, 1 }, Line.Parse("....."), Line.Parse("10101") },
+        { new[] { 3, 3 }, Line.Parse("......."), Line.Parse("1110111") }
     };
 
     public static TheoryData<int[], Line> NotMatchingHintExecuteTheoryData => new()
     {
-        { new[] { 1 }, new bool?[] { null, null, null } },
-        { new[] { 3 }, new bool?[] { null, null, null, null, null } },
-        { new[] { 1, 1 }, new bool?[] { null, null, null, null, null } }
+        { new[] { 1 }, Line.Parse("...") },
+        { new[] { 3 }, Line.Parse(".....") },
+        { new[] { 1, 1 }, Line.Parse(".....") }
     };
 
     [Theory]
