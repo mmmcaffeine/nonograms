@@ -10,11 +10,11 @@ public class StrategyBaseTests
         }
     }
 
-    public static TheoryData<int, int[], bool?[]> InvalidHintTestData => new()
+    public static TheoryData<int, int[], Line> InvalidHintTestData => new()
     {
-        { 5, new[] { 5 }, new bool?[] { true, false, true, false } },
-        { 7, new[] { 3, 3 }, new bool?[] { false, false, false } },
-        { 6, new[] { 1, 2, 1 }, new bool?[] { null, null } }
+        { 5, new[] { 5 }, Line.Parse("1010") },
+        { 7, new[] { 3, 3 }, Line.Parse("000") },
+        { 6, new[] { 1, 2, 1 }, Line.Parse("..") }
     };
 
     [Fact]
@@ -46,7 +46,7 @@ public class StrategyBaseTests
     }
 
     [Fact]
-    public void Execute_Should_ThrowWhenCellsIsNull()
+    public void Execute_Should_ThrowWhenLineIsNull()
     {
         // Arrange
         var sut = new TestableStrategy();
@@ -55,11 +55,11 @@ public class StrategyBaseTests
         var act = () => _ = sut.Execute(new[] { 1 }, null!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>().WithParameterName("cells");
+        act.Should().Throw<ArgumentNullException>().WithParameterName("line");
     }
 
     [Fact]
-    public void Execute_Should_ThrowWhenCellsIsEmpty()
+    public void Execute_Should_ThrowWhenLineIsEmpty()
     {
         // Arrange
         var sut = new TestableStrategy();
@@ -69,24 +69,24 @@ public class StrategyBaseTests
 
         // Assert
         act.Should().Throw<ArgumentException>()
-            .WithParameterName("cells")
+            .WithParameterName("line")
             .WithMessage("Value must contain at least one item.*");
     }
 
     [Theory]
     [MemberData(nameof(InvalidHintTestData))]
-    public void Execute_Should_Throw_WhenHintIsGreaterThanCells(int minimumCells, int[] hint, bool?[] cells)
+    public void Execute_Should_Throw_WhenHintIsGreaterThanCells(int minimumCells, int[] hint, Line line)
     {
         // Arrange
         var sut = new TestableStrategy();
 
         // Act
-        var act = () => _ = sut.Execute(hint, cells);
+        var act = () => _ = sut.Execute(hint, line);
 
         // Assert
         act.Should().Throw<ArgumentException>()
             .WithParameterName("hint")
             .WithMessage("It is not possible to fill in enough cells to fulfil the hint.*")
-            .WithMessage($"*The hint would require at least {minimumCells} cells, but there are only {cells.Length}.*");
+            .WithMessage($"*The hint would require at least {minimumCells} cells, but there are only {line.Length}.*");
     }
 }

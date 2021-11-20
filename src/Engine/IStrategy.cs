@@ -2,5 +2,5 @@
 
 public interface IStrategy
 {
-    IEnumerable<bool?> Execute(IEnumerable<int> hint, IEnumerable<bool?> cells);
+    Line Execute(IEnumerable<int> hint, Line line);
 }
