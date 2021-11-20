@@ -24,35 +24,32 @@ public class HintTests
             .WithMessage("*Value must contain at least one item.*");
     }
 
-    // xUnit can't resolve the parameters to the method properly if we type them as uint 😢 We have to type them as int, then convert
-    // ourselves to consume the constructor
     [Theory]
-    [InlineData("zero at index 0", 0)]
-    [InlineData("zeroes at indices 0, and 1", 0, 0)]
-    [InlineData("zero at index 0", 0, 1)]
-    [InlineData("zero at index 1", 1, 0)]
-    [InlineData("zeroes at indices 0, 1, 3, and 4", 0, 0, 1, 0, 0)]
-    [InlineData("zero at index 2", 1, 1, 0, 1, 1)]
-    public void Ctor_Should_ThrowWhenElementsContainsZeros(string messageFragment, params int[] elements)
+    [InlineData("zero at index 0", 0u)]
+    [InlineData("zeroes at indices 0, and 1", 0u, 0u)]
+    [InlineData("zero at index 0", 0u, 1u)]
+    [InlineData("zero at index 1", 1u, 0u)]
+    [InlineData("zeroes at indices 0, 1, 3, and 4", 0u, 0u, 1u, 0u, 0u)]
+    [InlineData("zero at index 2", 1u, 1u, 0u, 1u, 1u)]
+    public void Ctor_Should_ThrowWhenElementsContainsZeros(string messageFragment, params uint[] elements)
     {
         // Arrange, Act
-        var uintElements = elements.Cast<uint>();
-        var act = () => _ = new Hint(uintElements);
+        var act = () => _ = new Hint(elements);
 
         // Assert
         act.Should().Throw<ArgumentException>()
             .WithParameterName("elements")
             .WithMessage("*Value cannot contain zeroes.*")
             .WithMessage($"*Found {messageFragment}.*")
-            .Where(ex => ex.Data.Contains("elements") && ReferenceEquals(ex.Data["elements"], uintElements));
+            .Where(ex => ex.Data.Contains("elements") && ReferenceEquals(ex.Data["elements"], elements));
     }
 
     [Theory]
-    [InlineData(1)]
-    [InlineData(2, 3)]
-    [InlineData(4, 5, 6)]
-    public void Length_Should_BeLengthOfArray(params int[] elements) =>
-        new Hint(elements.Cast<uint>()).Length.Should().Be(elements.Length);
+    [InlineData(1u)]
+    [InlineData(2u, 3u)]
+    [InlineData(4u, 5u, 6u)]
+    public void Length_Should_BeLengthOfArray(params uint[] elements) =>
+        new Hint(elements).Length.Should().Be(elements.Length);
 
     [Fact]
     public void Indexer_Should_ReturnElementAtIndex()
