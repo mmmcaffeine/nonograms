@@ -10,11 +10,11 @@ public class StrategyBaseTests
         }
     }
 
-    public static TheoryData<int, uint[], Line> InvalidHintTestData => new()
+    public static TheoryData<int, Hint, Line> InvalidHintTestData => new()
     {
-        { 5, new uint[] { 5 }, Line.Parse("1010") },
-        { 7, new uint[] { 3, 3 }, Line.Parse("000") },
-        { 6, new uint[] { 1, 2, 1 }, Line.Parse("..") }
+        { 5, new Hint(new uint[] { 5 }), Line.Parse("1010") },
+        { 7, new Hint(new uint[] { 3, 3 }), Line.Parse("000") },
+        { 6, new Hint(new uint[] { 1, 2, 1 }), Line.Parse("..") }
     };
 
     [Fact]
@@ -75,7 +75,7 @@ public class StrategyBaseTests
 
     [Theory]
     [MemberData(nameof(InvalidHintTestData))]
-    public void Execute_Should_Throw_WhenHintIsGreaterThanCells(int minimumCells, uint[] hint, Line line)
+    public void Execute_Should_Throw_WhenHintIsGreaterThanCells(int minimumCells, Hint hint, Line line)
     {
         // Arrange
         var sut = new TestableStrategy();
