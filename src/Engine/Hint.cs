@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace Dgt.Nonograms.Engine;
 
@@ -63,24 +64,34 @@ public sealed class Hint
         }
     }
 
-    public static Hint Parse(string s)
+    public static bool TryParse(string s, [NotNullWhen(true)] out Hint? result)
     {
-        if (s is null) throw new ArgumentNullException(nameof(s));
-
-        var elements = s.Split(',')
+        var elements = (s ?? string.Empty).Split(',')
             .Select(e => e.Trim())
             .Select(value => uint.TryParse(value, out var result) ? (Value: result, Success: true) : (0, false))
             .ToList();
 
-        if (elements.Count == 0 || elements.Any(e => !e.Success || e.Value == 0))
+        bool elementsAreValid = elements.Count > 0 && elements.All(e => e.Success && e.Value > 0);
+
+        // Unsure why the cast is needed. The compiler is smart enough to know Value is a uint when it is returned in the tuple, but
+        // not when we do the Select against the tuple 😕
+        result = elementsAreValid
+            ? new Hint(elements.Select(e => (uint)e.Value))
+            : null;
+
+        return result is not null;
+    }
+
+    public static Hint Parse(string s)
+    {
+        if (s is null) throw new ArgumentNullException(nameof(s));
+
+        if(!TryParse(s, out var result))
         {
             throw CreateInvalidHintStringException(s);
         }
 
-        // Unsure why the cast is needed. The compiler is smart enough to know Value is a uint when it is returned in the tuple, but
-        // not when we do the Select against the tuple 😕
-
-        return new Hint(elements.Select(e => (uint)e.Value));
+        return result;
     }
 
     private static Exception CreateInvalidHintStringException(string s)

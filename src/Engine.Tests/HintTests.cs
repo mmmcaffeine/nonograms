@@ -2,6 +2,26 @@
 
 public class HintTests
 {
+    public static TheoryData<string, uint[]> ValidHintStringTestData => new()
+    {
+        { "1", new[] { 1u } },
+        { "1,10", new[] { 1u, 10u } },
+        { "5,6,3", new[] { 5u, 6u, 3u } }
+    };
+
+    public static TheoryData<string> InvalidHintStringTestData => new()
+    {
+        { "" },
+        { "   " },
+        { "one" },
+        { "1,three" },
+        { "0,1" },
+        { "1,0" },
+        { "1,,1" },
+        { ",1" },
+        { "1," }
+    };
+
     [Fact]
     public void Ctor_Should_ThrowWhenElementsIsNull()
     {
@@ -99,15 +119,7 @@ public class HintTests
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("   ")]
-    [InlineData("one")]
-    [InlineData("1,three")]
-    [InlineData("0,1")]
-    [InlineData("1,0")]
-    [InlineData("1,,1")]
-    [InlineData(",1")]
-    [InlineData("1,")]
+    [MemberData(nameof(InvalidHintStringTestData))]
     public void Parse_Should_ThrowWhenStringIsNotValidHintString(string value)
     {
         // Arrange, Act
@@ -122,10 +134,8 @@ public class HintTests
     }
 
     [Theory]
-    [InlineData("1", 1u)]
-    [InlineData("1,10", 1u, 10u)]
-    [InlineData("5,6,3", 5u,6u,3u)]
-    public void Parse_Should_ParseElementsInOrderFromCommaDelimitedListOfNumbers(string value, params uint[] elements)
+    [MemberData(nameof(ValidHintStringTestData))]
+    public void Parse_Should_ParseElementsInOrderFromCommaDelimitedListOfNumbers(string value, uint[] elements)
     {
         // Arrange, Act
         var hint = Hint.Parse(value);
@@ -134,6 +144,40 @@ public class HintTests
         using (new AssertionScope())
         {
             hint.Length.Should().Be(elements.Length);
+
+            for (var i = 0; i < elements.Length; i++)
+            {
+                hint[i].Should().Be(elements[i]);
+            }
+        }
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [MemberData(nameof(InvalidHintStringTestData))]
+    public void TryParse_Should_ReturnFalseAndNoLineWhenStringIsNotValidHintString(string value)
+    {
+        // Arrange, Act
+        var parsed = Hint.TryParse(value, out var hint);
+
+        // Assert
+        parsed.Should().BeFalse();
+        hint.Should().BeNull();
+    }
+
+    [Theory]
+    [MemberData(nameof(ValidHintStringTestData))]
+    public void TryParse_Should_ReturnTrueAndElementsInOrderWhenStringIsValidHintString(string value, uint[] elements)
+    {
+        // Arrange, Act
+        var parsed = Hint.TryParse(value, out var hint);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            parsed.Should().BeTrue();
+            hint.Should().NotBeNull();
+            hint!.Length.Should().Be(elements.Length);
 
             for (var i = 0; i < elements.Length; i++)
             {
