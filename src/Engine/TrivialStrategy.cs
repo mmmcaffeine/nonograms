@@ -2,16 +2,16 @@
 
 public class TrivialStrategy : StrategyBase
 {
-    protected override bool?[] Execute(int[] hint, bool?[] cells)
+    protected override bool?[] Execute(uint[] hint, bool?[] cells)
     {
         return CanSolve(hint, cells)
             ? Solve(hint).ToArray()
             : cells;
     }
 
-    private static bool CanSolve(int[] hint, bool?[] cells) => hint.Sum() + hint.Length - 1 == cells.Length;
+    private static bool CanSolve(uint[] hint, bool?[] cells) => hint.Sum(x => (int)x) + hint.Length - 1 == cells.Length;
 
-    private static IEnumerable<bool?> Solve(int[] hint)
+    private static IEnumerable<bool?> Solve(uint[] hint)
     {
         for (var i = 0; i < hint.Length; i++)
         {

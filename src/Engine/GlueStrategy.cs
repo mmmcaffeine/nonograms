@@ -4,7 +4,7 @@ public class GlueStrategy : StrategyBase
 {
     private const int NotFound = -1;
 
-    protected override bool?[] Execute(int[] hint, bool?[] cells)
+    protected override bool?[] Execute(uint[] hint, bool?[] cells)
     {
         var gluedLeft = ExecuteLeftGlue(hint[0], cells);
         var gluedRight = ExecuteRightGlue(hint[^1], gluedLeft);
@@ -12,7 +12,7 @@ public class GlueStrategy : StrategyBase
         return gluedRight;
     }
 
-    private static bool?[] ExecuteLeftGlue(int hint, bool?[] cells)
+    private static bool?[] ExecuteLeftGlue(uint hint, bool?[] cells)
     {
         var glued = new bool?[cells.Length];
         var gluedAt = Array.FindIndex(cells, cell => cell == true);
@@ -33,7 +33,7 @@ public class GlueStrategy : StrategyBase
         return glued;
     }
 
-    private static bool?[] ExecuteRightGlue(int hint, bool?[] cells)
+    private static bool?[] ExecuteRightGlue(uint hint, bool?[] cells)
     {
         var glued = new bool?[cells.Length];
         var gluedAt = Array.FindLastIndex(cells, cell => cell == true);

@@ -2,7 +2,7 @@
 
 public class NoSmallGapsStrategy : StrategyBase
 {
-    protected override bool?[] Execute(int[] hint, bool?[] cells)
+    protected override bool?[] Execute(uint[] hint, bool?[] cells)
     {
         var smallestHint = hint.Min();
         var indicesOfEliminatedCells = FindAllIndices(cells, c => c == false).ToArray();
