@@ -17,6 +17,8 @@ public sealed class Hint
         if (_elements.Any(x => x == 0)) throw CreateContainsZeroesException(_elements, elements, nameof(elements));
     }
 
+    private Hint() => _elements = Array.Empty<uint>();
+
     private static Exception CreateContainsZeroesException(uint[] elements, IEnumerable<uint> actualValue, string paramName)
     {
         var messageBuilder = new StringBuilder("Value cannot contain zeroes.");
@@ -106,4 +108,11 @@ public sealed class Hint
             Data = { { "s", s } }
         };
     }
+
+    public static implicit operator string(Hint hint) => hint is null || hint.Length == 0
+        ? string.Empty
+        // TODO We should not access private data of the parameter like this. Replace it when we can convert to uint[]
+        : string.Join(',', hint._elements);
+
+    public static readonly Hint Empty = new();
 }

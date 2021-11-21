@@ -185,4 +185,36 @@ public class HintTests
             }
         }
     }
+
+    [Fact]
+    public void ImplicitConversionToString_Should_ReturnEmptyWhenHintIsNull()
+    {
+        // Arrange, Act
+        string actual = (Hint)null!;
+
+        // Assert
+        actual.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ImplicitConversionToString_Should_ReturnEmptyWhenHintIsEmpty()
+    {
+        // Arrange
+        string actual = Hint.Empty;
+
+        // Assert
+        actual.Should().BeEmpty();
+    }
+
+    [Theory]
+    [MemberData(nameof(ValidHintStringTestData))]
+    public void ImplicitConversionToString_Should_ReturnCommaDelimitedListOfElements(string expected, uint[] elements)
+    {
+        // Arrange
+        var hint = new Hint(elements);
+        string actual = hint;
+
+        // Assert
+        expected.Should().Be(actual);
+    }
 }
