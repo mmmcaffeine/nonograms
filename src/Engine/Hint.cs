@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Dgt.Nonograms.Engine;
 
-public sealed class Hint : IEquatable<Hint>
+public sealed class Hint : IEquatable<Hint>, IEnumerable<uint>
 {
     private readonly uint[] _elements;
 
@@ -192,6 +192,10 @@ public sealed class Hint : IEquatable<Hint>
 
         return true;
     }
+
+    public IEnumerator<uint> GetEnumerator() => _elements.AsEnumerable().GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => _elements.GetEnumerator();
 
     public static readonly Hint Empty = new();
 }

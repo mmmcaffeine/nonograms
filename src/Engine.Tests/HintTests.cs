@@ -412,4 +412,26 @@ public class HintTests
         // Act, Assert
         (a.GetHashCode() == b.GetHashCode()).Should().Be(equal);
     }
+
+    [Fact]
+    public void GetEnumerator_Should_ReturnEnumeratorThatEnumeratesElements()
+    {
+        // Arrange
+        var elements = new uint[] { 3, 6, 8, 1, 12 };
+        var hint = new Hint(elements);
+
+        // Act, Assert
+        var i = 0;
+
+        using (new AssertionScope())
+        {
+            foreach (var element in hint)
+            {
+                element.Should().Be(elements[i]);
+                i++;
+            }
+        }
+
+        i.Should().Be(elements.Length);
+    }
 }
