@@ -22,6 +22,16 @@ public class HintTests
         { "1," }
     };
 
+    public static TheoryData<bool, string, uint[]> EqualityTestData => new()
+    {
+        { true, "1", new uint[] { 1u } },
+        { true, "2,3", new uint[] { 2u, 3u } },
+        { true, "4,5,6", new uint[] { 4u, 5u, 6u } },
+        { false, "4,5,6", new uint[] { 4u } },
+        { false, "2,3", new uint[] { 3u, 2u } },
+        { false, "1", new uint[] { 2u, 3u } }
+    };
+
     [Fact]
     public void Ctor_Should_ThrowWhenElementsIsNull()
     {
@@ -289,5 +299,117 @@ public class HintTests
             }
 
         }
+    }
+
+    [Fact]
+    public void Equality_Should_BeTrueWhenBothHintsAreNull()
+    {
+        // Arrange
+        Hint a = null!;
+        Hint b = null!;
+
+        // Act, Assert
+        using (new AssertionScope())
+        {
+            (a == b).Should().BeTrue();
+            (b == a).Should().BeTrue();
+
+            (a != b).Should().BeFalse();
+            (b != a).Should().BeFalse();
+        }
+    }
+
+    [Fact]
+    public void Equality_Should_BeFalseWhenExactlyOneHintIsNull()
+    {
+        // Arrange
+        Hint nullHint = null!;
+        var notNullHint = Hint.Parse("1");
+
+        // Act, Assert
+        using (new AssertionScope())
+        {
+            (nullHint == notNullHint).Should().BeFalse();
+            (notNullHint == nullHint).Should().BeFalse();
+
+            (nullHint != notNullHint).Should().BeTrue();
+            (notNullHint != nullHint).Should().BeTrue();
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(EqualityTestData))]
+    public void Equality_Should_BeTrueWhenHintsHaveSameNumberOfElementsInSameOrder(bool equal, string hintString, params uint[] elements)
+    {
+        // Arrange
+        var a = new Hint(elements);
+        var b = Hint.Parse(hintString);
+
+        // Act, Assert
+        using (new AssertionScope())
+        {
+            (a == b).Should().Be(equal);
+            (b == a).Should().Be(equal);
+
+            (a != b).Should().Be(!equal);
+            (b != a).Should().Be(!equal);
+        }
+    }
+
+    // The cast ensures we get the right overload of Equals; we're testing the version inherited from object, not the version on the
+    // IEquatable interface
+    [Fact]
+    public void Equals_Should_BeFalseWhenObjIsNull() => Hint.Parse("1").Equals((object?)null).Should().BeFalse();
+
+    // The cast ensures we get the right overload of Equals; we're testing the version inherited from object, not the version on the
+    // IEquatable interface
+    [Theory]
+    [MemberData(nameof(EqualityTestData))]
+    public void Equals_Should_CompareLengthAndElementsAtSameIndex(bool equal, string hintString, uint[] elements)
+    {
+        // Arrange
+        var a = Hint.Parse(hintString);
+        var b = new Hint(elements);
+
+        // Act, Assert
+        using (new AssertionScope())
+        {
+            a.Equals((object)b).Should().Be(equal);
+            b.Equals((object)a).Should().Be(equal);
+        }
+    }
+
+    [Fact]
+    public void EquatableEquals_Should_BeFalseWhenOtherIsNull()
+    {
+        // Arrange
+        IEquatable<Hint> equatable = Hint.Parse("1");
+
+        // Act, Assert
+        equatable.Equals(null).Should().BeFalse();
+    }
+
+    [Theory]
+    [MemberData(nameof(EqualityTestData))]
+    public void EquatableEquals_Should_CompareLengthAndElementsAtSameIndex(bool equal, string hintString, uint[] elements)
+    {
+        // Arrange
+        IEquatable<Hint> equatable = Hint.Parse(hintString);
+        var other = new Hint(elements);
+
+        // Act, Assert
+        equatable.Equals(other).Should().Be(equal);
+    }
+
+    [Theory]
+    [MemberData(nameof(EqualityTestData))]
+    public void GetHashCode_Should_ReturnSameHashCodeWhenElementsAreEqual(bool equal, string hintString, params uint[] elements)
+    {
+        // Arrange
+        var a = Hint.Parse(hintString);
+        var b = new Hint(elements);
+
+        // Act, Assert
+        (a.GetHashCode() == b.GetHashCode()).Should().Be(equal);
     }
 }
