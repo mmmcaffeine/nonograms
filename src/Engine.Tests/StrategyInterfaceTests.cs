@@ -10,6 +10,43 @@ public class StrategyInterfaceTests
         public abstract Line Execute(Hint hint, Line line);
     }
 
+    [Fact]
+    public void ExecuteWithStrings_Should_ThrowWhenHintStringIsNotValid()
+    {
+        // Arrange
+        IStrategy fakeStrategy = A.Fake<TestableStrategy>();
+
+        // Act
+        var act = () => _ = fakeStrategy.Execute("I Am Not A Hint", ".....");
+
+        // Assert
+        act.Should().Throw<ArgumentException>()
+            .WithMessage("*Value could not be parsed into a hint.*")
+            .WithMessage("*Actual value was 'I Am Not A Hint'.*")
+            .WithParameterName("hint")
+            .Where(ex => ex.Data.Contains("hint") && ex.Data["hint"]!.Equals("I Am Not A Hint"))
+            .WithInnerException<FormatException>();
+            
+    }
+
+    [Fact]
+    public void ExecuteWithStrings_Should_ThrowWhenLineStringIsNotValid()
+    {
+        // Arrange
+        IStrategy fakeStrategy = A.Fake<TestableStrategy>();
+
+        // Act
+        var act = () => _ = fakeStrategy.Execute("2,2", "I Am Not A Line");
+
+        // Assert
+        act.Should().Throw<ArgumentException>()
+            .WithMessage("*Value could not be parsed into a line.*")
+            .WithMessage("*Actual value was 'I Am Not A Line'.*")
+            .WithParameterName("line")
+            .Where(ex => ex.Data.Contains("line") && ex.Data["line"]!.Equals("I Am Not A Line"))
+            .WithInnerException<FormatException>();
+    }
+
     [Theory]
     [InlineData("1", "000")]
     [InlineData("2,2", ".....")]
