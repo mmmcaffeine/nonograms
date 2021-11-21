@@ -217,4 +217,77 @@ public class HintTests
         // Assert
         expected.Should().Be(actual);
     }
+
+    [Fact]
+    public void ImplicitConversionToArrayOfUint_Should_ReturnEmptyArrayWhenHintIsNull()
+    {
+        // Arrange
+        Hint hint = null!;
+
+        // Act
+        uint[] actual = hint;
+
+        // Assert
+        actual.Should().BeEmpty();
+
+    }
+
+    [Theory]
+    [InlineData(1u)]
+    [InlineData(2u ,3u)]
+    [InlineData(4u, 5u, 6u)]
+    public void ImplicitConversionToArrayOfUint_Should_ReturnUintPerElementInOrder(params uint[] elements)
+    {
+        // Arrange
+        var hint = new Hint(elements);
+
+        // Act
+        uint[] actual = hint;
+
+        // Assert
+        using(new AssertionScope())
+        {
+            actual.Length.Should().Be(hint.Length);
+
+            for(var i = 0; i < hint.Length; i++)
+            {
+                actual[i].Should().Be(hint[i]);
+            }
+        }
+    }
+
+    [Fact]
+    public void ImplicitConversionFromArrayOfUint_Should_ReturnEmptyWhenArrayIsNull()
+    {
+        // Arrange
+        uint[] elements = null!;
+
+        // Act
+        Hint hint = elements;
+
+        // Assert
+        hint.Length.Should().Be(0);
+    }
+
+    [Theory]
+    [InlineData(1u)]
+    [InlineData(2u, 3u)]
+    [InlineData(4u, 5u, 6u)]
+    public void ImplicitConversionFromArrayOfUnit_Should_ReturnOneElementPerItemInArrayInOrder(params uint[] elements)
+    {
+        // Arrange, Act
+        Hint hint = elements;
+
+        // Assert
+        using(new AssertionScope())
+        {
+            hint.Length.Should().Be(elements.Length);
+
+            for(var i = 0; i < elements.Length; i++)
+            {
+                hint[i].Should().Be(elements[i]);
+            }
+
+        }
+    }
 }

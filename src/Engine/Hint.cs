@@ -109,10 +109,30 @@ public sealed class Hint
         };
     }
 
+    public static implicit operator Hint(uint[] elements) => elements is null || elements.Length == 0
+        ? Empty
+        : new Hint(elements);
+
+    public static implicit operator uint[](Hint hint)
+    {
+        if(hint is null || hint.Length == 0)
+        {
+            return Array.Empty<uint>();
+        }
+
+        var elements = new uint[hint.Length];
+
+        for(var i = 0; i < hint.Length; i++)
+        {
+            elements[i] = hint[i];
+        }
+
+        return elements;
+    }
+
     public static implicit operator string(Hint hint) => hint is null || hint.Length == 0
         ? string.Empty
-        // TODO We should not access private data of the parameter like this. Replace it when we can convert to uint[]
-        : string.Join(',', hint._elements);
+        : string.Join(',', (uint[])hint);
 
     public static readonly Hint Empty = new();
 }
