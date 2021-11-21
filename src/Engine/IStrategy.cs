@@ -2,5 +2,5 @@
 
 public interface IStrategy
 {
-    Line Execute(IEnumerable<int> hint, Line line);
+    Line Execute(Hint hint, Line line);
 }

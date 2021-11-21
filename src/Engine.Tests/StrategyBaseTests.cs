@@ -4,17 +4,17 @@ public class StrategyBaseTests
 {
     private class TestableStrategy : StrategyBase
     {
-        protected override bool?[] Execute(int[] hint, bool?[] cells)
+        protected override bool?[] Execute(uint[] hint, bool?[] cells)
         {
             return cells;
         }
     }
 
-    public static TheoryData<int, int[], Line> InvalidHintTestData => new()
+    public static TheoryData<int, uint[], Line> InvalidHintTestData => new()
     {
-        { 5, new[] { 5 }, Line.Parse("1010") },
-        { 7, new[] { 3, 3 }, Line.Parse("000") },
-        { 6, new[] { 1, 2, 1 }, Line.Parse("..") }
+        { 5, new uint[] { 5 }, Line.Parse("1010") },
+        { 7, new uint[] { 3, 3 }, Line.Parse("000") },
+        { 6, new uint[] { 1, 2, 1 }, Line.Parse("..") }
     };
 
     [Fact]
@@ -37,7 +37,7 @@ public class StrategyBaseTests
         var sut = new TestableStrategy();
 
         // Act
-        var act = () => _ = sut.Execute(Array.Empty<int>(), new bool?[] { null });
+        var act = () => _ = sut.Execute(Array.Empty<uint>(), new bool?[] { null });
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -52,7 +52,7 @@ public class StrategyBaseTests
         var sut = new TestableStrategy();
 
         // Act
-        var act = () => _ = sut.Execute(new[] { 1 }, null!);
+        var act = () => _ = sut.Execute(new[] { 1u }, null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>().WithParameterName("line");
@@ -65,7 +65,7 @@ public class StrategyBaseTests
         var sut = new TestableStrategy();
 
         // Act
-        var act = () => _ = sut.Execute(new[] { 1 }, Array.Empty<bool?>());
+        var act = () => _ = sut.Execute(new[] { 1u }, Array.Empty<bool?>());
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -75,7 +75,7 @@ public class StrategyBaseTests
 
     [Theory]
     [MemberData(nameof(InvalidHintTestData))]
-    public void Execute_Should_Throw_WhenHintIsGreaterThanCells(int minimumCells, int[] hint, Line line)
+    public void Execute_Should_Throw_WhenHintIsGreaterThanCells(int minimumCells, uint[] hint, Line line)
     {
         // Arrange
         var sut = new TestableStrategy();
