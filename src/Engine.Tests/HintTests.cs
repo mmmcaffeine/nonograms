@@ -434,4 +434,11 @@ public class HintTests
 
         i.Should().Be(elements.Length);
     }
+
+    [Theory]
+    [InlineData(1, 1u)]
+    [InlineData(6, 2u, 3u)]
+    [InlineData(17, 4u, 5u, 6u)]
+    public void MinimumLineLength_Should_BeSumOfElementsWithGapBetweenElements(int expected, params uint[] elements) =>
+        new Hint(elements).MinimumLineLength.Should().Be(expected);
 }

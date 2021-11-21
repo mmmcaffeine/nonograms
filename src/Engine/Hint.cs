@@ -193,6 +193,8 @@ public sealed class Hint : IEquatable<Hint>, IEnumerable<uint>
         return true;
     }
 
+    public int MinimumLineLength => _elements.Sum(e => (int)e) + _elements.Length - 1;
+
     public IEnumerator<uint> GetEnumerator() => _elements.AsEnumerable().GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => _elements.GetEnumerator();
