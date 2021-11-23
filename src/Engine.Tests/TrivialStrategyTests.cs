@@ -2,28 +2,36 @@
 
 public class TrivialStrategyTests
 {
-    public static TheoryData<Hint, Line, Line> MatchingHintExecuteTheoryData => new()
+    [Theory]
+    [InlineData("5", ".....", "11111")]
+    [InlineData("2,2", ".....", "11011")]
+    [InlineData("1,1,1", ".....", "10101")]
+    [InlineData("3,3", ".......", "1110111")]
+    public void Execute_Should_FillOrEliminateAllCellsWhenHintDoesMatch(string hint, string line, string expected)
     {
-        { new Hint(new uint[] { 5 }), Line.Parse("....."), Line.Parse("11111") },
-        { new Hint(new uint[] { 2, 2 }), Line.Parse("....."), Line.Parse("11011") },
-        { new Hint(new uint[] { 1, 1, 1 }), Line.Parse("....."), Line.Parse("10101") },
-        { new Hint(new uint[] { 3, 3 }), Line.Parse("......."), Line.Parse("1110111") }
-    };
+        // Arrange
+        IStrategy sut = new TrivialStrategy();
 
-    public static TheoryData<Hint, Line> NotMatchingHintExecuteTheoryData => new()
-    {
-        { new Hint(new uint[] { 1 }), Line.Parse("...") },
-        { new Hint(new uint[] { 3 }), Line.Parse(".....") },
-        { new Hint(new uint[] { 1, 1 }), Line.Parse(".....") }
-    };
+        // Act
+        var actual = sut.Execute(hint, line);
+
+        // Assert
+        actual.Should().Equal(Line.Parse(expected));
+    }
 
     [Theory]
-    [MemberData(nameof(MatchingHintExecuteTheoryData))]
-    public void Execute_Should_FillOrEliminateAllCellsWhenHintDoesMatch(Hint hint, Line line, Line expected) =>
-        new TrivialStrategy().Execute(hint, line).Should().Equal(expected);
+    [InlineData("1", "...")]
+    [InlineData("3", ".....")]
+    [InlineData("1,1", ".....")]
+    public void Execute_Should_ReturnUnalteredCellsWhenHintDoesNotMatch(string hint, string line)
+    {
+        // Arrange
+        IStrategy sut = new TrivialStrategy();
 
-    [Theory]
-    [MemberData(nameof(NotMatchingHintExecuteTheoryData))]
-    public void Execute_Should_ReturnUnalteredCellsWhenHintDoesNotMatch(Hint hint, Line line) =>
-        new TrivialStrategy().Execute(hint, line).Should().Equal(line);
+        // Act
+        var actual = sut.Execute(hint, line);
+
+        // Assert
+        actual.Should().Equal(Line.Parse(line));
+    }
 }
